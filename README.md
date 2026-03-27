@@ -43,10 +43,6 @@ pip install streamlit spacy PyMuPDF
 python -m spacy download en_core_web_sm
 streamlit run app.py
 
-🌐 Live Demo
-
-(Add your deployed link here after deployment)
-
 🎯 Future Improvements
 Job Role Matching (AI-based)
 Resume Ranking System
