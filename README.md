@@ -40,7 +40,9 @@ Resume Score: 35/100
 🧪 Run Locally
 
 pip install streamlit spacy PyMuPDF
+
 python -m spacy download en_core_web_sm
+
 streamlit run app.py
 
 🎯 Future Improvements
