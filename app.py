@@ -1,18 +1,14 @@
 import streamlit as st
-import spacy
-import fitz
+import fitz  # PyMuPDF
 from skills import TECHNICAL_SKILLS, SOFT_SKILLS
 
-# Load NLP model
-nlp = spacy.load("en_core_web_sm")
-
-# Page settings
+# Page config
 st.set_page_config(page_title="AI Resume Analyzer", layout="centered")
 
 st.title("📄 AI Resume Analyzer")
 st.write("Upload your resume to extract skills and get smart suggestions 🚀")
 
-# Extract text from PDF
+# -------- Extract text from PDF --------
 def extract_text(file):
     text = ""
     pdf = fitz.open(stream=file.read(), filetype="pdf")
@@ -20,22 +16,22 @@ def extract_text(file):
         text += page.get_text()
     return text.lower()
 
-# Extract skills
+# -------- Extract skills --------
 def extract_skills(text):
     tech_found = set()
     soft_found = set()
 
     for skill in TECHNICAL_SKILLS:
-        if skill in text:
+        if skill.lower() in text:
             tech_found.add(skill)
 
     for skill in SOFT_SKILLS:
-        if skill in text:
+        if skill.lower() in text:
             soft_found.add(skill)
 
-    return list(tech_found), list(soft_found)
+    return sorted(list(tech_found)), sorted(list(soft_found))
 
-# Upload file
+# -------- Upload --------
 uploaded_file = st.file_uploader("📤 Upload Resume (PDF)", type=["pdf"])
 
 if uploaded_file:
@@ -47,13 +43,13 @@ if uploaded_file:
 
         tech_skills, soft_skills = extract_skills(text)
 
-        # 📊 Dashboard
+        # -------- Summary --------
         st.subheader("📊 Summary")
         col1, col2 = st.columns(2)
         col1.metric("Technical Skills", len(tech_skills))
         col2.metric("Soft Skills", len(soft_skills))
 
-        # 💻 Technical Skills (3 Columns)
+        # -------- Technical Skills --------
         st.subheader("💻 Technical Skills")
 
         if tech_skills:
@@ -63,7 +59,7 @@ if uploaded_file:
         else:
             st.warning("No technical skills found")
 
-        # 🧠 Soft Skills (2 Columns)
+        # -------- Soft Skills --------
         st.subheader("🧠 Soft Skills")
 
         if soft_skills:
@@ -73,7 +69,7 @@ if uploaded_file:
         else:
             st.warning("No soft skills found")
 
-        # 🎯 Resume Score
+        # -------- Score --------
         tech_score = len(tech_skills) * 5
         soft_score = len(soft_skills) * 3
         total_score = min(tech_score + soft_score, 100)
@@ -87,7 +83,7 @@ if uploaded_file:
         else:
             st.warning("⚠️ Needs Improvement")
 
-        # 🎯 Suggestions
+        # -------- Suggestions --------
         st.subheader("🎯 Suggestions to Improve Resume")
 
         suggestions = []
@@ -95,7 +91,7 @@ if uploaded_file:
         important_skills = ["python", "sql", "machine learning", "data analysis"]
 
         for skill in important_skills:
-            if skill not in tech_skills:
+            if skill not in text:
                 suggestions.append(f"👉 Consider adding **{skill.title()}**")
 
         if len(soft_skills) < 3:
